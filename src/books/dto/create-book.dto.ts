@@ -30,5 +30,5 @@ export class CreateBookDto {
     @IsOptional()
     @IsNotEmpty()
     @IsEnum(BookStatus)
-    status: BookStatus
+    status?: BookStatus
 }
