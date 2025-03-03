@@ -21,7 +21,8 @@ model User {
   password          String
   phone             String
   role              Role              @default(CUSTOMER)
-  cart              Cart[]
+  status            UserStatus        @default(INACTIVE)
+  cart              Cart?
   order             Order[]
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
@@ -33,6 +34,7 @@ model Book {
   price             Int
   stock             Int
   genre             BookGenre
+  status            BookStatus        @default(ACTIVE)
   orderBook         OrderBook[]
   writerBook        WriterBook[]
   cartBook          CartBook[]
@@ -83,8 +85,8 @@ model Order {
 
 model WriterBook {
   writerId          Int
-  bookId            Int
   writer            Writer            @relation(fields: [writerId], references: [id])
+  bookId            Int
   book              Book              @relation(fields: [bookId], references: [id])
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
@@ -120,4 +122,14 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
+}
+
+enum BookStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
 }
