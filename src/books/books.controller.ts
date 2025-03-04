@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { AddBookWriterDto } from './dto/add-book-writer.dto';
 
 @Controller('books')
 export class BooksController {
@@ -27,5 +28,19 @@ export class BooksController {
         return this.booksService.updateBook(id, updateBookDto);
     }
 
+    @Post(':bookId/writers')
+    async addBookWriter(@Param('bookId', ParseIntPipe) bookId: number, @Body() addBookWriterDto: AddBookWriterDto) {
+        return this.booksService.addBookWriter(bookId, addBookWriterDto);
+    }
+
+    @Get(':bookId/writers')
+    async getBookWriters(@Param('bookId', ParseIntPipe) bookId: number) {
+        return this.booksService.getBookWriters(bookId);
+    }
+
+    @Delete(':bookId/writers/:writerId')
+    async deleteBookWriter(@Param('bookId', ParseIntPipe) bookId: number, @Param('writerId', ParseIntPipe) writerId: number) {
+        return this.booksService.deleteBookWriter(bookId, writerId);
+    }
 
 }

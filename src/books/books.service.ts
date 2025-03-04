@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { BookStatus } from '@prisma/client';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { AddBookWriterDto } from './dto/add-book-writer.dto';
 
 @Injectable()
 export class BooksService {
@@ -86,6 +87,106 @@ export class BooksService {
             status: 'success',
             message: `book with id ${id} updated successfully`,
             data: updatedBook
+        };
+    }
+
+    async addBookWriter(bookId: number, addBookWriterDto: AddBookWriterDto) {
+        const { writerId } = addBookWriterDto;
+
+        const book = await this.databaseService.book.findUnique({
+            where: {
+                id: bookId
+            }
+        });
+
+        if (!book) throw new NotFoundException(`book with id ${bookId} not found.`);
+
+        const writer = await this.databaseService.writer.findUnique({
+            where: {
+                id: writerId
+            }
+        });
+
+        if (!writer) throw new NotFoundException(`writer with id ${writerId}`);
+
+        const bookWriter = await this.databaseService.writerBook.findUnique({
+            where: {
+                writerId_bookId: { writerId, bookId }
+            }
+        });
+
+        if (bookWriter) throw new ConflictException('writer already was added to book');
+
+        await this.databaseService.writerBook.create({
+            data: {
+                bookId,
+                writerId,
+            }
+        });
+
+        return {
+            status: 'success',
+            message: 'writer added to book successfully'
+        };
+    }
+
+    async getBookWriters(bookId: number) {
+        const book = await this.databaseService.book.findUnique({
+            where: {
+                id: bookId
+            }
+        });
+
+        if (!book) throw new NotFoundException(`book with id ${bookId} not found`);
+
+        const bookWriters = await this.databaseService.writerBook.findMany({
+            where: {
+                bookId
+            }
+        });
+
+        const writerIds = bookWriters.map((writer) => writer.writerId);
+        
+        const writers = await this.databaseService.writer.findMany({
+            where: {
+                id: { in: writerIds}
+            }
+        })
+
+        return {
+            status: 'success',
+            message: 'list of writers of book: ',
+            data: writers
+        }
+    }
+
+    async deleteBookWriter(bookId: number, writerId: number) {
+        const book = await this.databaseService.book.findUnique({
+            where: {
+                id: bookId
+            }
+        });
+
+        if (!book) throw new NotFoundException(`book with id ${bookId} not found`);
+
+        const bookWriter = await this.databaseService.writerBook.findFirst({
+            where: {
+              bookId,
+              writerId,
+            },
+        });
+
+        if (!bookWriter) throw new NotFoundException('book doesnt have such writer');
+
+        await this.databaseService.writerBook.delete({
+            where: {
+                writerId_bookId: { writerId, bookId }
+            }
+        });
+
+        return {
+            status: 'success',
+            message: `Writer ${writerId} removed from book ${bookId}`,
         };
     }
 }
