@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { DatabaseService } from 'src/database/database.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { BookStatus } from '@prisma/client';
+import { UpdateBookDto } from './dto/update-book.dto';
 
 @Injectable()
 export class BooksService {
@@ -68,6 +69,24 @@ export class BooksService {
             message: `book with id ${id}:`,
             data: book
         }
+    }
+
+    async updateBook(id: number, updateBookDto: UpdateBookDto) {
+        const book = await this.databaseService.book.findUnique({ where: { id } });
+        if (!book) throw new NotFoundException(`book with id ${id} not found`);
+
+        const updatedBook = await this.databaseService.book.update({
+            where: {
+                id
+            },
+            data: updateBookDto
+        });
+
+        return {
+            status: 'success',
+            message: `book with id ${id} updated successfully`,
+            data: updatedBook
+        };
     }
 }
 
