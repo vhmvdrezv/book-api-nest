@@ -1,6 +1,7 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateBookDto } from './dto/create-book.dto';
+import { BookStatus } from '@prisma/client';
 
 @Injectable()
 export class BooksService {
@@ -55,6 +56,18 @@ export class BooksService {
                 data: newBook
             }
         });
+    }
+
+    async getOneBook(id: number) {
+        const book = await this.databaseService.book.findUnique({ where: { id } });
+
+        if (!book) throw new NotFoundException(`book with id ${id} not found.`);
+
+        return{
+            status: 'success',
+            message: `book with id ${id}:`,
+            data: book
+        }
     }
 }
 
