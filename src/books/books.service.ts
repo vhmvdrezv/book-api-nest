@@ -1,16 +1,30 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateBookDto } from './dto/create-book.dto';
-import { BookStatus } from '@prisma/client';
+import { BookGenre, BookStatus } from '@prisma/client';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { AddBookWriterDto } from './dto/add-book-writer.dto';
+import { FilterBooksDto } from './dto/filter-books.dto';
+import { contains } from 'class-validator';
 
 @Injectable()
 export class BooksService {
     constructor(private readonly databaseService: DatabaseService) { };
    
-    async getAllBooks() {
-        const books = await this.databaseService.book.findMany();
+    async getAllBooks(filterBooksDto: FilterBooksDto) {
+        const { search, genre } = filterBooksDto;
+
+        const where: { title?: { contains: string }, genre?: BookGenre } = { };
+
+        if (search) {
+            where.title = { contains:  search }
+        } else {
+            where.genre = genre
+        }
+
+        const books = await this.databaseService.book.findMany({
+            where
+        });
 
         return {
             status: 'success',
