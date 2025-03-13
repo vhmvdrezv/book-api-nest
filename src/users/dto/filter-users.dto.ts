@@ -1,6 +1,6 @@
 import { UserStatus } from "@prisma/client";
 import { Type } from "class-transformer";
-import { IsEnum, IsInt, IsOptional, Min } from "class-validator";
+import { IsEmail, IsEnum, IsInt, IsOptional, Matches, Min } from "class-validator";
 
 export class FilterUsersDto {
     @IsOptional()
@@ -18,4 +18,12 @@ export class FilterUsersDto {
     @IsInt()
     @Min(1)
     limit?: number;
+
+    @IsOptional()
+    @Matches(/^09\d{9}$/)
+    phone?: string
+
+    @IsOptional()
+    @IsEmail()
+    email?: string
 }

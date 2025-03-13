@@ -1,10 +1,12 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { DatabaseService } from 'src/database/database.service';
 import { FilterUsersDto } from './dto/filter-users.dto';
 import { filter } from 'rxjs';
 import { UserStatus } from '@prisma/client';
+import { userSelectFields } from './constants';
+import { GetUserByEmailDto } from './dto/get-user-by-email.dto';
 
 @Injectable()
 export class UsersService {
@@ -36,26 +38,20 @@ export class UsersService {
     }
 
     async getAllUsers(filterUsersDto: FilterUsersDto) {
-        const { status, page = 1, limit = 5 } = filterUsersDto;
+        const { status, email, phone, page = 1, limit = 5 } = filterUsersDto;
+
+        const whereCondition: any = {};
+        if (status) whereCondition.status = status;
+        if (email) whereCondition.email = email;
+        if (phone) whereCondition.phone = phone;
 
         const totalUsers = await this.databaseService.user.count({
-            where: {
-                status
-            }
+            where: whereCondition
         });
 
         const users = await this.databaseService.user.findMany({
-            where: {
-                status
-            },
-            select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-                phone: true,
-                status: true
-            },
+            where: whereCondition,
+            select: userSelectFields,
             skip: (page - 1) * limit,
             take: limit
         });
@@ -69,5 +65,21 @@ export class UsersService {
             nextPage: page < totalPages,
             prevPage: page > 1
         }
+    }
+
+    async getUserById(id: number) {
+        const user = await this.databaseService.user.findUnique({
+            where: {
+                id
+            },
+            select: userSelectFields
+        });
+        if (!user) throw new NotFoundException(`user with id ${id} not found`);
+
+        return {
+            status: 'success',
+            message: 'user: ',
+            data: user
+        };
     }
 }
