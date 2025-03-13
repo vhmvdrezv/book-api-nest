@@ -7,6 +7,7 @@ import { filter } from 'rxjs';
 import { UserStatus } from '@prisma/client';
 import { userSelectFields } from './constants';
 import { GetUserByEmailDto } from './dto/get-user-by-email.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -80,6 +81,26 @@ export class UsersService {
             status: 'success',
             message: 'user: ',
             data: user
+        };
+    }
+
+    async updateUser(id: number, updateUserDto: UpdateUserDto) {
+        const { firstName, lastName, status } = updateUserDto;
+
+        const userExists = await this.databaseService.user.findUnique({ where: { id } });
+        if (!userExists) throw new NotFoundException(`user with id ${id} not found`);
+
+        const updatedUser = await this.databaseService.user.update({
+            where: {
+                id
+            },
+            data: updateUserDto
+        });
+
+        return {
+            status: 'success',
+            message: 'user updated successfully',
+            data: updatedUser
         };
     }
 }
