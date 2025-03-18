@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { CartModule } from './cart/cart.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { JwtModule } from '@nestjs/jwt';
     DatabaseModule,
     WritersModule,
     UsersModule,
-    AuthModule
+    AuthModule,
+    CartModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -24,7 +24,7 @@ export class AuthService {
         const result = await bcrypt.compare(password, user.password);
         if (!result) return null;
 
-        return result
+        return user
     }
 
     async login(user: User) {
