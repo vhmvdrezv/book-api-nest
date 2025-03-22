@@ -69,4 +69,59 @@ export class CartService {
             message: 'Book added to cart successfully',
         };
     }
+
+
+    async deleteBookFromCart(userId: number, bookId: number) {
+        const cartExists = await this.databaseService.cart.findUnique({ where: { userId } });
+        if (!cartExists) throw new NotFoundException(`Cart with id ${userId} not found`);
+
+        const cartBook = await this.databaseService.cartBook.findUnique({
+            where: {
+                cartId_bookId: {cartId: userId, bookId}
+            }
+        });
+
+        if (!cartBook) throw new BadRequestException(`Book with id ${bookId} is not in your cart`);
+        if (cartBook.quantity > 1) {
+            await this.databaseService.cartBook.update({
+                where: {
+                    cartId_bookId: {cartId: userId, bookId}
+                }, data: {
+                    quantity: { decrement: 1 }
+                }
+            })
+        } else {
+            await this.databaseService.cartBook.delete({
+                where: {
+                    cartId_bookId: {cartId: userId, bookId}
+                }
+            })
+        }
+
+        const cart = await this.databaseService.cart.findUnique({
+            where: { userId },
+            include: {
+                books: {
+                    include: {
+                        book: true
+                    },
+                }
+            },
+        })
+
+        return {
+            status:'success',
+            message: 'Book deleted from cart successfully',
+            data: {
+                userId: cart!.userId,
+                books: cart!.books.map(item => ({
+                  bookId: item.book.id,
+                  title: item.book.title,
+                  price: item.book.price,
+                  quantity: item.quantity,
+                })),
+            }
+        }
+    }
+
 }
