@@ -124,4 +124,25 @@ export class CartService {
         }
     }
 
+    async deleteCart(userId: number) {
+        const cart = await this.databaseService.cart.findUnique({
+            where: { userId }
+        })
+
+        if (!cart) throw new NotFoundException(`Cart with id ${userId} not found`);
+
+        await this.databaseService.cartBook.deleteMany({
+            where: { cartId: cart.userId }
+        });
+
+        await this.databaseService.cart.delete({
+            where: { userId }
+        });
+
+        return {
+            status: 'success',
+            message: 'Cart deleted successfully',
+        };
+    }
+
 }

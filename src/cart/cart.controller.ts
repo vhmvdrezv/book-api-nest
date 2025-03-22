@@ -24,4 +24,9 @@ export class CartController {
     async deleteBookFromCart(@Request() req, @Param('bookId', ParseIntPipe) bookId: number) {
         return this.cartService.deleteBookFromCart(req.user.id, bookId);
     }
+
+    @Delete()
+    async deleteCart(@Request() req) {
+        return this.cartService.deleteCart(req.user.id);
+    }
 }
