@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { CartModule } from './cart/cart.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { CartModule } from './cart/cart.module';
     WritersModule,
     UsersModule,
     AuthModule,
-    CartModule
+    CartModule,
+    OrdersModule
   ],
   controllers: [AppController],
   providers: [AppService],

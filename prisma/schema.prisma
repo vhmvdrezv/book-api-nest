@@ -75,7 +75,7 @@ model Order {
   userId            Int
   user              User              @relation(fields: [userId], references: [id])
   orderDate         DateTime          @default(now())
-  status            OrderStatus
+  status            OrderStatus       @default(PENDING)
   totalPrice        Int
   orderBook         OrderBook[]
   createdAt         DateTime          @default(now())

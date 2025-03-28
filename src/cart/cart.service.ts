@@ -50,6 +50,14 @@ export class CartService {
         if (book.status !== BookStatus.ACTIVE) throw new BadRequestException(`book is not available`);
         if (book.stock < 1) throw new BadRequestException(`Book with id ${bookId} is out of stock`);
         
+        // check if book out of stock
+        const countBook = await this.databaseService.cartBook.findUnique({
+            where: {
+                cartId_bookId: { cartId: userId, bookId }
+            }
+        })
+        if (countBook && countBook.quantity >= book.stock) throw new BadRequestException(`Book with id ${bookId} is out of stock`);
+
         const cartExists = await this.databaseService.cart.findUnique({ where: { userId } });
         if (!cartExists) await this.databaseService.cart.create({ data: { userId } });
 
