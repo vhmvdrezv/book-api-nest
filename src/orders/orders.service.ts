@@ -3,6 +3,8 @@ import { BookStatus, OrderStatus } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 import { GetOrdersDto } from './dto/get-orders.dto';
 import { orderSelectFields } from './constants';
+import { GetAdminOrdersDto } from './dto/get-admin-orders.dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Injectable()
 export class OrdersService {
@@ -77,7 +79,7 @@ export class OrdersService {
         });
     }
 
-    async getOrders(userId: number, getOrdersDto: GetOrdersDto) {
+    async getMyOrders(userId: number, getOrdersDto: GetOrdersDto) {
         const { page = 1, limit = 5 } = getOrdersDto;
 
         const orders = await this.databaseService.order.findMany({
@@ -103,7 +105,7 @@ export class OrdersService {
             prevPage: page > 1
         }
     }
-    async getOrderById(userId: number, orderId: number) {
+    async getMyOrderById(userId: number, orderId: number) {
         const order = await this.databaseService.order.findUnique({
             where: {
                 id: orderId,
@@ -158,5 +160,79 @@ export class OrdersService {
                 data: updatedOrder
             }
         });
+    }
+
+    async getAllOrders(getAdminOrdersDto: GetAdminOrdersDto) {
+        const { page = 1, limit = 5, status } = getAdminOrdersDto;
+
+        const where: any = {};
+        if (status) {
+            where.status = status;
+        }
+
+        const orders = await this.databaseService.order.findMany({
+            where,
+            select: orderSelectFields,
+            skip: (page - 1) * limit,
+            take: limit,
+            orderBy: { orderDate: 'desc' }
+        });
+
+        const totalOrders = await this.databaseService.order.count({
+            where
+        });
+        const totalPages = Math.ceil(totalOrders / limit);
+
+        return {
+            status: 'success',
+            message: 'Orders retrieved successfully',
+            data: orders,
+            nextPage: page < totalPages,
+            prevPage: page > 1
+        }
+    }
+
+    async getOrderById(id: number) {
+        const select: any = orderSelectFields;
+        select.user = {
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                phone: true,
+                email: true,
+            }
+        };
+
+        const order = await this.databaseService.order.findUnique({
+            where: { id },
+            select
+        });
+        if (!order) throw new BadRequestException(`Order with ID ${id} not found`);
+        return {
+            status: 'success',
+            message: 'Order retrieved successfully',
+            data: order
+        }
+    }
+
+    async updateOrder(id: number, updateOrderDto: UpdateOrderDto) {
+        const order = await this.databaseService.order.findUnique({
+            where: { id },
+        });
+        if (!order) throw new BadRequestException(`Order with ID ${id} not found`);
+
+        const updatedOrder = await this.databaseService.order.update({
+            where: { id },
+            data: {
+                status: updateOrderDto.status,
+            }
+        });
+
+        return {
+            status: 'success',
+            message: 'Order updated successfully',
+            data: updatedOrder
+        }
     }
 }

@@ -15,13 +15,13 @@ export class OrdersController {
     }   
 
     @Get()
-    getOrders(@Request() req,@Body() getOrdersDto: GetOrdersDto) {
-        return this.orderService.getOrders(req.user.id, getOrdersDto);
+    getMyOrders(@Request() req,@Body() getOrdersDto: GetOrdersDto) {
+        return this.orderService.getMyOrders(req.user.id, getOrdersDto);
     }
 
     @Get(':id')
     async getOrderById(@Request() req, @Param('id', ParseIntPipe) id: number) {
-        return this.orderService.getOrderById(req.user.id, id);
+        return this.orderService.getMyOrderById(req.user.id, id);
     }
 
     @Patch(':id/cancel')
