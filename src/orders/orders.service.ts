@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { BookStatus, OrderStatus } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 import { GetOrdersDto } from './dto/get-orders.dto';
+import { orderSelectFields } from './constants';
 
 @Injectable()
 export class OrdersService {
@@ -83,24 +84,7 @@ export class OrdersService {
             where: {
                 userId
             },
-            select: {
-                id: true,
-                userId: true,
-                orderDate: true,
-                status: true,
-                totalPrice: true,
-                orderBook: {
-                    select: {
-                        bookId: true,
-                        book: {
-                            select: {
-                                id: true,
-                                title: true,
-                            }
-                        }
-                    }
-                }
-            },
+            select: orderSelectFields,
             skip: (page - 1) * limit,
             take: limit,
             orderBy: { orderDate: 'desc' }
@@ -118,5 +102,61 @@ export class OrdersService {
             nextPage: page < totalPages,
             prevPage: page > 1
         }
+    }
+    async getOrderById(userId: number, orderId: number) {
+        const order = await this.databaseService.order.findUnique({
+            where: {
+                id: orderId,
+            },
+            select: orderSelectFields
+        });
+
+
+        if (!order) throw new BadRequestException(`Order with ID ${orderId} not found`);
+
+        if(order.userId !== userId) throw new BadRequestException(`Order with ID ${orderId} does not belong to you`);
+
+        return {
+            status: 'success',
+            message: 'Order retrieved successfully',
+            data: order
+        }
+    }
+
+    async cancelOrder(userId: number, orderId: number) {
+        const order = await this.databaseService.order.findUnique({
+            where: { id: orderId },
+            include: { orderBook: true },
+        });
+
+        if (!order) throw new BadRequestException(`Order with ID ${orderId} not found`);
+
+        if(order.userId !== userId) throw new BadRequestException(`Order with ID ${orderId} does not belong to you`);
+
+        if(order.status !== OrderStatus.PENDING) throw new BadRequestException(`Order with ID ${orderId} cannot be cancelled`);
+
+        return await this.databaseService.$transaction(async (tx) => {
+            // Update book stock and status
+            await Promise.all(
+                order.orderBook.map(({ bookId, quantity }) =>
+                    tx.book.update({
+                        where: { id: bookId },
+                        data: { stock: { increment: quantity } },
+                    })
+                )
+            );
+
+            // Update order status to cancelled
+            const updatedOrder = await tx.order.update({
+                where: { id: orderId },
+                data: { status: OrderStatus.CANCELLED },
+            });
+
+            return {
+                status: 'success',
+                message: 'Order cancelled successfully',
+                data: updatedOrder
+            }
+        });
     }
 }
