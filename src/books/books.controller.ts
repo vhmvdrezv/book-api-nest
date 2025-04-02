@@ -1,9 +1,12 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { AddBookWriterDto } from './dto/add-book-writer.dto';
 import { FilterBooksDto } from './dto/filter-books.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('books')
 export class BooksController {
@@ -19,6 +22,8 @@ export class BooksController {
         return this.booksService.getOneBook(id);
     }
 
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles('ADMIN')
     @Post()
     async createBook(@Body() createBookDto: CreateBookDto) {
         return this.booksService.createBook(createBookDto);

@@ -18,7 +18,7 @@ async function bootstrap() {
   app.useGlobalFilters(new GlobalExceptionFilter(logger));
 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT', 4000)
+  const port = configService.get<number>('PORT', 3333)
 
   await app.listen(port);
 }
