@@ -1,99 +1,304 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 📚 Bookstore API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A comprehensive RESTful API for managing an online bookstore built with NestJS, Prisma, and PostgreSQL. This API provides complete functionality for book management, user authentication, shopping cart operations, and order processing with role-based access control.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Features
 
-## Description
+### 📖 Core Functionality
+- **Book Management**: Create, read, update, and delete books with genre categorization
+- **Author Management**: Manage writers and their book associations
+- **User Authentication**: JWT-based authentication with signup/login
+- **Shopping Cart**: Add/remove books, manage quantities
+- **Order Management**: Place orders, track status, cancel orders
+- **Admin Panel**: Administrative controls for order and user management
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### 🔐 Security & Authorization
+- **Role-based Access Control**: Customer and Admin roles
+- **JWT Authentication**: Secure token-based authentication
+- **Input Validation**: Comprehensive data validation using class-validator
+- **Password Encryption**: Bcrypt hashing for secure password storage
 
-## Project setup
+### 📊 Advanced Features
+- **Pagination**: Efficient data loading with pagination support
+- **Filtering & Search**: Advanced filtering for books, users, and orders
+- **Stock Management**: Real-time inventory tracking
+- **Transaction Safety**: Database transactions for critical operations
+- **Global Exception Handling**: Centralized error management
+- **Custom Logging**: Winston-based logging system
 
+## 🛠️ Tech Stack
+
+- **Framework**: [NestJS](https://nestjs.com/) - Progressive Node.js framework
+- **Database**: [PostgreSQL](https://www.postgresql.org/) - Open source relational database
+- **ORM**: [Prisma](https://www.prisma.io/) - Next-generation ORM
+- **Authentication**: JWT (JSON Web Tokens)
+- **Validation**: class-validator & class-transformer
+- **Password Hashing**: bcrypt
+- **Logging**: Winston
+
+## 📋 Prerequisites
+
+Before running this application, make sure you have the following installed:
+
+- Node.js (v16 or higher)
+- npm or yarn
+- PostgreSQL database
+- Git
+
+## ⚡ Quick Start
+
+### 1. Clone the Repository
 ```bash
-$ npm install
+git clone https://github.com/yourusername/bookstore-api.git
+cd bookstore-api
 ```
 
-## Compile and run the project
-
+### 2. Install Dependencies
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
+# or
+yarn install
 ```
 
-## Run tests
+### 3. Environment Setup
+Create a `.env` file in the root directory:
 
-```bash
-# unit tests
-$ npm run test
+```env
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/bookstore_db"
 
-# e2e tests
-$ npm run test:e2e
+# JWT
+JWT_SECRET="your-super-secret-jwt-key"
+JWT_EXPIRES_IN="7d"
 
-# test coverage
-$ npm run test:cov
+# Server
+PORT=3000
+NODE_ENV="development"
 ```
 
-## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### 5. Start the Application
 ```bash
-$ npm install -g mau
-$ mau deploy
+# Development mode
+npm run start:dev
+
+# Production mode
+npm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The API will be available at `http://localhost:3000`
 
-## Resources
+## 📚 API Documentation
 
-Check out a few resources that may come in handy when working with NestJS:
+### Authentication Endpoints
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+#### Register User
+```http
+POST /auth/signup
+Content-Type: application/json
 
-## Support
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "phone": "0912345678",
+  "password": "password123"
+}
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+#### Login
+```http
+POST /auth/login
+Content-Type: application/json
 
-## Stay in touch
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Book Management
 
-## License
+#### Get All Books
+```http
+GET /books?search=title&genre=FICTION
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+#### Get Single Book
+```http
+GET /books/:id
+```
+
+#### Create Book (Admin Only)
+```http
+POST /books
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+
+{
+  "title": "The Great Gatsby",
+  "price": 1500,
+  "stock": 50,
+  "genre": "FICTION",
+  "writerIds": [1, 2],
+  "status": "ACTIVE"
+}
+```
+
+#### Update Book
+```http
+PATCH /books/:id
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+
+{
+  "title": "Updated Title",
+  "price": 2000,
+  "stock": 30
+}
+```
+
+### Shopping Cart
+
+#### Add Book to Cart
+```http
+POST /cart/books
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+
+{
+  "bookId": 1
+}
+```
+
+#### Get My Cart
+```http
+GET /cart
+Authorization: Bearer <jwt_token>
+```
+
+#### Remove Book from Cart
+```http
+DELETE /cart/books/:bookId
+Authorization: Bearer <jwt_token>
+```
+
+### Order Management
+
+#### Create Order
+```http
+POST /orders
+Authorization: Bearer <jwt_token>
+```
+
+#### Get My Orders
+```http
+GET /orders?page=1&limit=10
+Authorization: Bearer <jwt_token>
+```
+
+#### Cancel Order
+```http
+PATCH /orders/:id/cancel
+Authorization: Bearer <jwt_token>
+```
+
+### Admin Endpoints
+
+#### Get All Orders (Admin)
+```http
+GET /admin/orders?status=PENDING&page=1&limit=10
+Authorization: Bearer <admin_jwt_token>
+```
+
+#### Update Order Status (Admin)
+```http
+PATCH /admin/orders/:id
+Authorization: Bearer <admin_jwt_token>
+Content-Type: application/json
+
+{
+  "status": "SHIPPED"
+}
+```
+
+## 🗄️ Database Schema
+
+### Core Models
+
+#### User
+- `id` - Primary key
+- `firstName` - User's first name
+- `lastName` - User's last name
+- `email` - Unique email address
+- `phone` - Unique phone number
+- `password` - Encrypted password
+- `role` - USER | ADMIN
+- `status` - ACTIVE | INACTIVE
+
+#### Book
+- `id` - Primary key
+- `title` - Book title
+- `price` - Price in cents
+- `stock` - Available quantity
+- `genre` - FICTION | NON_FICTION | MYSTERY | SCI_FI | FANTASY
+- `status` - ACTIVE | INACTIVE
+
+#### Order
+- `id` - Primary key
+- `userId` - Foreign key to User
+- `totalPrice` - Total order amount
+- `status` - PENDING | SHIPPED | DELIVERED | CANCELLED
+- `orderDate` - Creation timestamp
+
+## 🔧 Configuration
+
+### Environment Variables
+
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `DATABASE_URL` | PostgreSQL connection string | ✅ | - |
+| `JWT_SECRET` | Secret key for JWT signing | ✅ | - |
+| `JWT_EXPIRES_IN` | JWT expiration time | ❌ | 7d |
+| `PORT` | Server port | ❌ | 3000 |
+| `NODE_ENV` | Environment mode | ❌ | development |
+
+### Validation Rules
+
+#### Phone Number
+- Must follow Iranian mobile format: `09xxxxxxxxx`
+- Regex pattern: `^09\d{9}$`
+
+#### Password
+- Minimum 8 characters
+- Required for all user accounts
+
+## 📦 Project Structure
+
+```
+src/
+├── auth/                 # Authentication module
+│   ├── dto/             # Data transfer objects
+│   ├── guards/          # Auth guards (JWT, Local, Roles)
+│   └── strategies/      # Passport strategies
+├── books/               # Book management module
+├── cart/                # Shopping cart module
+├── orders/              # Order management module
+├── users/               # User management module
+├── writers/             # Writer/Author module
+├── database/            # Database service
+├── common/              # Shared utilities
+│   ├── exceptions/      # Global exception filters
+│   └── logger/          # Custom logging
+└── main.ts             # Application entry point
+```
+
+## 🙏 Acknowledgments
+
+- NestJS team for the amazing framework
+- Prisma team for the excellent ORM
+- All contributors who helped improve this project
+
+---
+
+⭐ If you found this project helpful, please give it a star on GitHub!
